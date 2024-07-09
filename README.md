@@ -1440,104 +1440,72 @@ Neste exemplo, usamos **`useReducer`** para gerenciar o estado do dedo da próte
 
 ### 4. Criando Seus Próprios Hooks
 
-Criar um hook customizado em React permite encapsular lógica de estado ou efeito que pode ser reutilizada em vários componentes. Um hook customizado é uma função que usa um ou mais hooks internos (como useState, useEffect, etc.) e retorna valores ou funções para serem usados em componentes funcionais.
+Em alguns casos, os Hooks nativos do React acabam ficando um pouco limitados com relação às suas funcionalidades, sendo preciso reescrever a mesma lógica em vários componentes. Existe uma grande chance de que em algum momento algo irá mudar e toda essa lógica deverá ser reescrita, então, em casos assim, deverá ser procurado e alterado o código escrito em cada arquivo. Para evitar esse tipo de problema, é possível criar Hooks customizados.
 
-Aqui está um exemplo passo a passo de como criar um hook customizado:
+Criar um Hook customizado em React permite encapsular uma lógica de estado ou efeito que pode ser reutilizada em vários componentes, sendo necessário, caso precise, alterar o código em apenas um lugar. Um hook customizado nada mais é que uma função que usa um ou mais hooks internos (como useState, useEffect, etc.) e retorna valores ou funções para serem usados em outros componentes. Por padrão, os Hooks seguem o nome "useAlgumaCoisa", devem seguir todas restrições de Hooks nativos e geralmente possuem uma pasta própria, fora de "Components".
 
-Exemplo: Criando um Hook Customizado para Gerenciar o Tamanho da Janela
-Configuração Inicial:
+Por exemplo, podemos criar um Hook que sempre possui o valor atual da janela, que pode ser útil em diversos componentes:
 
-Certifique-se de ter um projeto React configurado. Você pode usar Create React App para configurar rapidamente um projeto:
-bash
-Copiar código
-npx create-react-app custom-hook-example
-cd custom-hook-example
-Crie o Hook Customizado:
+```js
+import { useState, useEffect } from "react";
 
-Dentro do diretório src, crie um arquivo chamado useWindowSize.js ou useWindowSize.jsx.
-
-javascript
-Copiar código
-// src/useWindowSize.js
-import { useState, useEffect } from 'react';
-
-function useWindowSize() {
-// Estado para armazenar as dimensões da janela
-const [windowSize, setWindowSize] = useState({
-width: window.innerWidth,
-height: window.innerHeight,
-});
-
-useEffect(() => {
-// Função para atualizar o estado com as novas dimensões da janela
-const handleResize = () => {
-setWindowSize({
-width: window.innerWidth,
-height: window.innerHeight,
-});
+type WindowSize = {
+  width: number,
+  height: number,
 };
 
-    // Adiciona o listener para o evento de redimensionamento
-    window.addEventListener('resize', handleResize);
-
-    // Chama a função de limpeza para remover o listener quando o componente desmontar
-    return () => {
-      window.removeEventListener('resize', handleResize);
+export function useWindowSize() {
+  const [windowSize, setWindowSize] =
+    useState <
+    WindowSize >
+    {
+      width: window.innerWidth,
+      height: window.innerHeight,
     };
 
-}, []); // Passa um array vazio para executar o efeito apenas uma vez (na montagem e desmontagem)
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
 
-return windowSize; // Retorna as dimensões da janela
+    // Vincula o evento de "resize" da tela (sempre a tela for redimensionada) com a função handleResize
+    window.addEventListener("resize", handleResize);
+
+    // Remover o listener quando o componente desmontar
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // retorna os valores que serão acessados pelos componentes
+  return windowSize;
 }
+```
 
-export default useWindowSize;
-Utilize o Hook Customizado em um Componente:
+Agora o Hook useWindowSize pode ser utilizado em qualquer componente para obter as dimensões da janela, sempre atualizadas:
 
-Agora você pode usar o hook useWindowSize em qualquer componente funcional para obter as dimensões da janela.
+```jsx
+import { useWindowSize } from ".../useWindowSize";
 
-javascript
-Copiar código
-// src/App.js
-import React from 'react';
-import useWindowSize from './useWindowSize';
+export const MeuComponente = () => {
+  const { width, height } = useWindowSize();
 
-function App() {
-const windowSize = useWindowSize();
-
-return (
-
-<div>
-<h1>Dimensões da Janela</h1>
-<p>Largura: {windowSize.width}px</p>
-<p>Altura: {windowSize.height}px</p>
-</div>
-);
-}
-
-export default App;
-Explicação do Hook Customizado
-Importar Hooks Necessários:
-
-Importamos useState e useEffect do React para gerenciar estado e efeitos colaterais.
-Definir Estado Inicial:
-
-Definimos um estado inicial para armazenar a largura e altura da janela.
-Implementar useEffect:
-
-Usamos useEffect para adicionar um event listener que atualiza o estado sempre que a janela é redimensionada.
-O efeito inclui uma função de limpeza que remove o listener quando o componente é desmontado.
-Retornar Valores do Hook:
-
-O hook retorna o estado atual das dimensões da janela, permitindo que qualquer componente que use o hook tenha acesso a esses valores.
-Vantagens de Usar Hooks Customizados
-Reutilização de Código: Encapsula lógica complexa em uma função reutilizável.
-Organização: Mantém os componentes funcionais mais limpos e focados em renderização.
-Testabilidade: Facilita o teste de unidades de lógica independentes dos componentes.
-Com esse exemplo, você agora sabe como criar e utilizar um hook customizado em React, permitindo encapsular e reutilizar lógica de estado e efeitos em seus componentes.
+  return (
+    <div className="flex flex-col justify-center items-center h-screen">
+      <h1 className="text-2xl">Dimensões da Janela</h1>
+      <p>Largura: {width}px</p>
+      <p>Altura: {height}px</p>
+    </div>
+  );
+};
+```
 
 ## Conclusão
 
-Isso encerra a parte fundamental de React, que será válida para qualquer ambiente: apenas React, NextJS ou algum outro framework e React Native. No Ex Machina, não temos o costume de utilizar React puro e as peculiaridades de cada ambiente serão tratadas em suas próprias capacitações, assumindo o conhecimento dessa parte inicial.
+Isso encerra a parte fundamental de React, que será, em geral, válida para qualquer ambiente: apenas React, NextJS (e outros frameworks) e React Native. No Ex Machina, não temos o costume de utilizar React puro e as peculiaridades de cada ambiente serão tratadas em suas próprias capacitações, assumindo o conhecimento dessa parte inicial.
 
 ## conteúdos complementares
 
