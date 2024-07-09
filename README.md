@@ -1,6 +1,6 @@
 # Capacitação React
 
-## **Introdução**
+## Introdução
 
 React é uma biblioteca JavaScript de código aberto amplamente utilizada para construir interfaces de usuário (UI) interativas. O React permite a criação de componentes declarativos e reutilizáveis que podem ser combinados de diferentes formas a fim de criar interfaces complexas de maneira eficiente, sendo assim, uma ótima ferramenta para o desenvolvimento de aplicações web. No entanto, sozinho, possui algumas limitações, que serão abordadas mais detalhamente nas próximas capacitações.
 
