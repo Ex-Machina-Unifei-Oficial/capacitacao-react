@@ -14,7 +14,7 @@ React é uma biblioteca JavaScript de código aberto amplamente utilizada para c
 
 Componentes no React são blocos de construção fundamentais para o desenvolvimento de interfaces de usuário. Eles são pedaços modulares de código que encapsulam a estrutura, a estilização e a lógica de uma parte específica da aplicação, sendo, portanto, reutilizáveis, independentes e combináveis.
 
-O próprio nome "componente" é autoexplicativo no sentido de ser um pedaço de um todo maior, mas uma possível analogia é a seguinte: para construir uma casa, a tarefa é subdividida em diversas etapas, nínguem constrói uma casa da noite para o dia. Primeiro de tudo, é preciso fazer cada cômodo que compõe a casa. Porém um cômodo também não é feito da noite para o dia, então cada um também é subdividido, e por aí vai, até que se chegue em uma unidade básica: um tijolo. Com cada tijolo, facilmente reutilizável e independente de outras partes, é possível contruir cada parte que vai compor a casa no final. Voltando para a construção do site, como devem imaginar, os tijolos seriam os componentes. No entanto, as paredes também são componentes, mesmo que um pouco mais complexos e dependentes das partes que a compõe. Assim como um cômodo inteiro também pode ser um componente, ainda mais complexo. Dessa forma, a complexidade dos componentes é algo muito variável, desde que cumpram apenas uma função e tenham uma boa base, eles podem variar de botões simples a elementos de interface de usuário complexos, como barras de navegação ou até mesmo páginas inteiras.
+O próprio nome "componente" é autoexplicativo no sentido de ser um pedaço de um todo maior, mas uma possível analogia é a seguinte: para construir uma casa, a tarefa é subdividida em diversas etapas, nínguem constrói uma casa da noite para o dia. Primeiro de tudo, é preciso fazer cada cômodo que compõe a casa. Porém um cômodo também não é feito da noite para o dia, então cada um também é subdividido, e por aí vai, até que se chegue em uma unidade básica: um tijolo. Com cada tijolo, facilmente reutilizável e independente de outras partes, é possível construir cada parte que vai compor a casa no final. Voltando para a construção do site, como devem imaginar, os tijolos seriam os componentes. No entanto, as paredes também são componentes, mesmo que um pouco mais complexos e dependentes das partes que a compõe. Assim como um cômodo inteiro também pode ser um componente, ainda mais complexo. Dessa forma, a complexidade dos componentes é algo muito variável, desde que cumpram apenas uma função e tenham uma boa base, eles podem variar de botões simples a elementos de interface de usuário complexos, como barras de navegação ou até mesmo páginas inteiras.
 
 Porém, também deve-se tomar cuidado no sentido de ultrapassar os limites nas subdivisões: dividir um tijolo até que se transforme em um átomo, inviabiliza a construção da mesma forma que não dividir a casa.
 
@@ -365,6 +365,192 @@ export const Mao = () => {
 ```
 
 No entanto, isso é feito pela função map, já vista na capacitaçõ de JavaScript. O exemplo acima utiliza de uma Array de dados (no caso de string, mas também poderia ser de Object ou de outro tipo qualquer) para fazer a chamada dos componentes. Note que é possível que cada componente mantenha suas particularidades de acordo com a estrutura de dado utilizada. Um ponto fundamental dessa abordagem é lembrar de utilizar a propriedade "key" no componente chamado, ela é essencial para que o React consiga diferenciar cada componente e realizar as devidas atualizações. A restrição dessa propriedade é que ela deve ser única para cada componente e manter-se a mesma em diferentes renderizações, justamente por ser utilizada como um ID para o componente.
+
+## Estilização
+
+Antes de tratar de assuntos mais complexos do React, vale notar as diferentes possibilidades oferecidas para a estilização dos componentes.
+
+Estilizar componentes em React pode ser feito de várias maneiras, incluindo o uso de CSS padrão e frameworks como Tailwind CSS. Vamos explorar ambos os métodos e explicar os atributos style e className.
+
+### O atributo style
+
+A primeira maneira de realizar a estilização de componentes React é através do atributo `style`. Ele pode ser entendido como uma adaptação de CSS para JS e está disponível em todas tags importadas do HTML. Geralmente é utilizado para aplicar estilos inline diretamente em um elemento:
+
+```jsx
+export const MeuComponente = () => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        backgroundColor: "aliceblue",
+      }}
+    >
+      <h1 style={{ fontSize: "36px", color: "#333" }}>Hello, World!</h1>
+    </div>
+  );
+};
+```
+
+Duas coisas que podem parecer estranhas à primeira vista são a presença de dois pares de chaves no atributo style e as propriedades do CSS estarem escritas em camelCase em vez de kebab-case. Isso acontece porque os estilos são definidos, na veradde, como um objeto JavaScript. Dessa forma, o primeiro par de chaves define que o conteúdo interno deve ser interpretado como JS, o segundo se trata da sintaxe de definição de um objeto. Já o camelCase, é porque o JS não tem suporte a kebab-case, pois ele entende o símbolo "-" como operação de subtração.
+
+Mas, justamente por se tratar de um objeto comum de JS, ele pode ser definido separadamente (Prática é mais comum em React Native):
+
+```jsx
+export const MeuComponente2 = () => {
+  return (
+    <div style={divStyle}>
+      <h1 style={h1Style}>Hello, World!</h1>
+    </div>
+  );
+};
+
+const divStyle = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "100vh",
+  backgroundColor: "aliceblue",
+};
+
+const h1Style = { fontSize: "36px", color: "#333" };
+```
+
+### CSS Padrão
+
+Também é possível utilizar arquivos CSS separados, assim como feito em HTML.
+
+```css
+// styles.css
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: aliceblue;
+}
+
+.title {
+  font-size: 36px;
+  color: #333;
+}
+```
+
+```js
+import "./styles.css";
+
+export function MeuComponente() {
+  return (
+    <div className="container">
+      <h1 className="title">Hello, World!</h1>
+    </div>
+  );
+}
+```
+
+A única diferença desse modo com o HTML é que o atributo em React se chama `className`, isso acontece porque a palavra `class` já é reservada em JS para definição de classes POO, então poderia ficar confuso. Alternativamente, também é possível exportar um módulo com as classes CSS:
+
+```css
+// Atenção para o nome do arquivo:
+// styles.module.css
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: aliceblue;
+}
+
+.title {
+  font-size: 36px;
+  color: #333;
+}
+```
+
+```js
+import styles from "./styles.module.css";
+
+export function MeuComponente() {
+  return (
+    <div className={styles.container}>
+      <h1 className={styles.title}>Hello, World!</h1>
+    </div>
+  );
+}
+```
+
+As únicas diferenças desse modo são o nome do arquivo CSS e a forma de utilizar as estilizações, que passam a ser tratadas como um objeto JavaScript.
+
+### Integração com Tailwind CSS
+
+Assim como tratado na capacitação de CSS, Tailwind se trata de uma biblioteca que facilita a estilização de componentes, tornando o processo mais rápido. Com sua crescente popularidade, logo foi possível integrá-lo com componentes React.
+
+Primeiramente é necessário instalá-lo, caso não tenha vindo por padrão no template na criação do projeto. Para isso, siga as instruções de instalação no site oficial do Tailwind CSS:
+
+- **npm install -D tailwindcss**: instala o pacote do tailwind.
+- **npx tailwindcss init**: inicializa o tailwind, gerando os arquivos necessários de configuração.
+
+Adicione as seguintes configurações em cada arquivo:
+
+```js
+// tailwind.config.js
+module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}"], // em quais arquivos é possível utiilzar o tailwind
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+```
+
+```css
+// src/index.css
+// utilitários básicos do tailwind
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// é possível adicionar estilizações do css normalmente abaixo
+```
+
+Para aplicar as classes Tailwind no componente, assim como esperado, basta utilizá-las diretamente no atributo className:
+
+```jsx
+export function MeuComponente() {
+  return (
+    <div className="flex justify-center items-center h-screen bg-blue-100">
+      <h1 className="text-2xl text-gray-800">Hello, World Tailwind!</h1>
+    </div>
+  );
+}
+```
+
+Por fim, também é possível criar módulos CSS separados com tailwind utilizando a diretiva `@apply`:
+
+```css
+// styles.module.css
+.container {
+  @apply flex justify-center items-center h-screen bg-blue-100;
+}
+
+.title {
+  @apply text-2xl text-gray-800;
+}
+```
+
+```jsx
+import styles from "./styles.module.css";
+
+export function MeuComponente() {
+  return (
+    <div className={styles.container}>
+      <h1 className={styles.title}>Hello, World Tailwind 2!</h1>
+    </div>
+  );
+}
+```
 
 ## Props (Propriedades)
 
@@ -903,7 +1089,7 @@ O Hook **`useState`** é uma ferramenta poderosa para gerenciar estados em compo
 
 ### 2. useEffect
 
-Com o useState é possível fazer com que componentes re-renderizem, atulizando sua aparência na tela. Imagine agora que, além de renderizar novamente o componente, também seja necessário realizar uma ação sempre que um determinado valor for alterado. Isso se chama **efeitos colaterais** e é justamente a utilidade principal do Hook useEffect, por isso o nome.
+Com o useState é possível fazer com que componentes re-renderizem, atualizando sua aparência na tela. Imagine agora que, além de renderizar novamente o componente, também seja necessário realizar uma ação sempre que um determinado valor for alterado. Isso se chama **efeitos colaterais** e é justamente a utilidade principal do Hook useEffect, por isso o nome.
 
 Efeitos colaterais comuns são chamadas de APIs, adição de eventListeners, manipulações de DOM (com React puro), entre outros. Ele é essencialmente uma forma de executar um determinado código após a renderização do componente. Sua estrutura completa é a seguinte:
 
@@ -966,7 +1152,7 @@ export function Mao() {
 }
 ```
 
-Esse exemplo segue o que já vinha sendo trabalhado anteriormente, no entanto agora, toda vez que o estadaoDaMao mudar para "aberta" ou "fechada", o componente, além de atualizar o valor na tela, também executará uma chamada a uma API fictícia responsável por de fato abrir ou fechar a mão da prótese. Vale destacar que a primeira vez que o componente renderiza, a função também é executada.
+Esse exemplo segue o que já vinha sendo trabalhado anteriormente, no entanto agora, toda vez que o estadoDaMao mudar para "aberta" ou "fechada", o componente, além de atualizar o valor na tela, também executará uma chamada a uma API fictícia responsável por de fato abrir ou fechar a mão da prótese. Vale destacar que a primeira vez que o componente renderiza, a função também é executada.
 
 Vale destacar que variáveis "let" comuns do JavaScript não desencadeiam a execução da função, pois não são gerenciadas pelo React e não causam re-renderização do componente quando alteradas, porém, existem casos em que é interessante utilizar as props como dependência.
 
@@ -1251,6 +1437,103 @@ export function Mao() {
 ```
 
 Neste exemplo, usamos **`useReducer`** para gerenciar o estado do dedo da prótese de mão. O estado é atualizado com base nas ações de abrir e fechar o dedo, controlando o estado de abertura/fechamento do dedo. Nesse caso acaba apenas adicionando complexidade a mais para uma situação que poderia ser resolvida facilmente com useState, no entanto é muito útil para gerenciar estados complexos e transições em componentes funcionais.
+
+### 4. Criando Seus Próprios Hooks
+
+Criar um hook customizado em React permite encapsular lógica de estado ou efeito que pode ser reutilizada em vários componentes. Um hook customizado é uma função que usa um ou mais hooks internos (como useState, useEffect, etc.) e retorna valores ou funções para serem usados em componentes funcionais.
+
+Aqui está um exemplo passo a passo de como criar um hook customizado:
+
+Exemplo: Criando um Hook Customizado para Gerenciar o Tamanho da Janela
+Configuração Inicial:
+
+Certifique-se de ter um projeto React configurado. Você pode usar Create React App para configurar rapidamente um projeto:
+bash
+Copiar código
+npx create-react-app custom-hook-example
+cd custom-hook-example
+Crie o Hook Customizado:
+
+Dentro do diretório src, crie um arquivo chamado useWindowSize.js ou useWindowSize.jsx.
+
+javascript
+Copiar código
+// src/useWindowSize.js
+import { useState, useEffect } from 'react';
+
+function useWindowSize() {
+// Estado para armazenar as dimensões da janela
+const [windowSize, setWindowSize] = useState({
+width: window.innerWidth,
+height: window.innerHeight,
+});
+
+useEffect(() => {
+// Função para atualizar o estado com as novas dimensões da janela
+const handleResize = () => {
+setWindowSize({
+width: window.innerWidth,
+height: window.innerHeight,
+});
+};
+
+    // Adiciona o listener para o evento de redimensionamento
+    window.addEventListener('resize', handleResize);
+
+    // Chama a função de limpeza para remover o listener quando o componente desmontar
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+
+}, []); // Passa um array vazio para executar o efeito apenas uma vez (na montagem e desmontagem)
+
+return windowSize; // Retorna as dimensões da janela
+}
+
+export default useWindowSize;
+Utilize o Hook Customizado em um Componente:
+
+Agora você pode usar o hook useWindowSize em qualquer componente funcional para obter as dimensões da janela.
+
+javascript
+Copiar código
+// src/App.js
+import React from 'react';
+import useWindowSize from './useWindowSize';
+
+function App() {
+const windowSize = useWindowSize();
+
+return (
+
+<div>
+<h1>Dimensões da Janela</h1>
+<p>Largura: {windowSize.width}px</p>
+<p>Altura: {windowSize.height}px</p>
+</div>
+);
+}
+
+export default App;
+Explicação do Hook Customizado
+Importar Hooks Necessários:
+
+Importamos useState e useEffect do React para gerenciar estado e efeitos colaterais.
+Definir Estado Inicial:
+
+Definimos um estado inicial para armazenar a largura e altura da janela.
+Implementar useEffect:
+
+Usamos useEffect para adicionar um event listener que atualiza o estado sempre que a janela é redimensionada.
+O efeito inclui uma função de limpeza que remove o listener quando o componente é desmontado.
+Retornar Valores do Hook:
+
+O hook retorna o estado atual das dimensões da janela, permitindo que qualquer componente que use o hook tenha acesso a esses valores.
+Vantagens de Usar Hooks Customizados
+Reutilização de Código: Encapsula lógica complexa em uma função reutilizável.
+Organização: Mantém os componentes funcionais mais limpos e focados em renderização.
+Testabilidade: Facilita o teste de unidades de lógica independentes dos componentes.
+Com esse exemplo, você agora sabe como criar e utilizar um hook customizado em React, permitindo encapsular e reutilizar lógica de estado e efeitos em seus componentes.
 
 ## Conclusão
 
