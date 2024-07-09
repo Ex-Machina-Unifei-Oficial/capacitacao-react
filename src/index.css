@@ -1,5 +1,9 @@
-// Estilizações globais
+/* Configurações do tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+/* Estilizações globais */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
