@@ -1,0 +1,7 @@
+.container {
+  @apply flex justify-center items-center h-screen bg-blue-100;
+}
+
+.title {
+  @apply text-2xl text-gray-800;
+}
